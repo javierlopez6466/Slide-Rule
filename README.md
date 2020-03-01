@@ -1,2 +1,2 @@
 # Slide-Rule
-Slide Rule Programs
+Requires PIL. Download and run
