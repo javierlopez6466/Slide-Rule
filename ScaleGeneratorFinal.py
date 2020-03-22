@@ -1,3 +1,6 @@
+
+#WARNING: DEPRECATED, use "Laser Cut" file
+
 #Final Scale Generator (2/2/20)
 
 #--------------------------------------------------------
