@@ -1,9 +1,12 @@
-#Most Recent Update (3/22/20)
+#Most Recent Update (4/11/20)
+
+# **** if you need pure black print, simply replace all 'black'
+# with 'red' in a COPY (and remove red from putsym options)****
 
 #--------------------------------------------------------
 
 #Slide Rule Scale Generator 1.0
-#Available Scales: A B C D K R1 R2 CI DI CF DF L S T ST
+#Available Scales: A B C D K R1 R2 CI DI CF DF CIF L S T ST
 
 #Table of Contents
 #   1. Setup
@@ -123,14 +126,22 @@ def getheight(s,z,i):
     w,h=font.getsize(str1)
     return(h)
 
-def putsymbol(yoff,s,x,y,z,i):
+def putsymbol(C,yoff,s,x,y,z,i):
 
+    #C = color
     #yoff = y pos
     #s = symbol (string)
     #x = offset of centerline from left index (li)
     #y = offset of base from baseline (al == 1) or top from upperline (al == 0)
     #z = font size
     #i = italization (normal == 0 , italic == 1)
+    
+    if C == 'black':
+        color = 'black'
+    if C == 'red':
+        color = 'red'
+    if C == 'green':
+        color = '#228B1E'
 
     if i == 0:
         font=ImageFont.truetype("cmuntt.ttf",z)
@@ -144,7 +155,7 @@ def putsymbol(yoff,s,x,y,z,i):
         y0 = y
     if al == 1:
         y0 = sh-1-y-h*1.2
-    draw.text((x+li-round(w/2)+round(stt/2),y0+yoff),str1,font=font,fill='black')
+    draw.text((x+li-round(w/2)+round(stt/2),y0+yoff),str1,font=font,fill=color)
 
 #----------------------Scale Generating Function----------------------------
 
@@ -156,11 +167,13 @@ def genscale(yoff,sc):
         if sc == 'A' or sc == 'B':
             return round(1/2*sl*math.log10(x))
         if sc == 'R1' or sc == 'R2':
-            return round(2*sl*math.log10(x/10))
+            return round(2*sl*math.log10( x/10))
         if sc == 'K':
             return round(1/3*sl*math.log10(x))
-        if sc == 'CI' or sc == 'DI': #or sc == 'CIF'
+        if sc == 'CI' or sc == 'DI':
             return round(sl*(1-math.log10(x)))
+        if sc == 'CIF':
+            return round(sl*(1-math.log10(math.pi)-math.log10(x)))
         if sc == 'L':
             return round(sl*x/10)
         if sc == 'S':
@@ -175,82 +188,104 @@ def genscale(yoff,sc):
         shift = 0
         sym1 = 'A'
         sym2 = 'x²'
+        col = 'black'
     if sc == 'B':
         shift = 0
         sym1 = 'B'
         sym2 = 'x²'
+        col = 'black'
     if sc == 'C':
         shift = 0
         sym1 = 'C'
         sym2 = 'x'
+        col = 'black'
     if sc == 'D':
         shift = 0
         sym1 = 'D'
         sym2 = 'x'
+        col = 'black'
     if sc == 'K':
         shift = 0
         sym1 = 'K'
         sym2 = 'x³'
+        col = 'black'
     if sc == 'R1':
         shift = 0
         sym1 = 'R'
         #sym12 = '1'
         #sym20 = '√x'
         sym2 = '√x'
+        col = 'black'
     if sc == 'R2':
         shift = -sl
         sym1 = 'R'
         #sym12 = '2'
         sym2 = '√x' #special merger?
+        col = 'black'
     if sc == 'CI':
         shift = 0
         sym1 = 'CI'
         sym2 = '1/x'
+        col = 'red'
     if sc == 'DI':
         shift = 0
         sym1 = 'DI'
         sym2 = '1/x'
+        col = 'red'
     if sc == 'CF':
         shift = round(sl*(1-math.log10(math.pi)))
         sym1 = 'CF'
         sym2 = 'πx'
+        col = 'black'
     if sc == 'DF':
         shift = round(sl*(1-math.log10(math.pi)))
         sym1 = 'DF'
         sym2 = 'πx'
-    #if sc == 'CIF': 
-        #shift = round(sl*math.log10(math.pi)) 
-        #sym1 = 'CIF'
-        #sym2 = '1/πx'
+        col = 'black'
+    if sc == 'CIF': 
+        shift = 0
+        sym1 = 'CIF'
+        sym2 = '1/πx'
+        col = 'red'
     if sc == 'L':
         shift = 0
         sym1 = 'L'
         sym2 = 'log x'
+        col = 'black'
     if sc == 'S':
         shift = 0
         sym1 = 'S'
         sym2 = 'sin x'
+        col = 'black'
     if sc == 'T':
         shift = 0
         sym1 = 'T'
         sym2 = 'tan x'
+        col = 'black'
     if sc == 'ST':
         shift = 0
         sym1 = 'ST'
-        sym2 = 'θ<5.7' #eh,..    
+        sym2 = 'θ<5.7°' #eh,..
+        col = 'black'
     if sc == 'R1':
         if al == 1:
-            putsymbol(yoff,1,-2/100*sl+0.5*getwidth(sym1,90,0),sh-1.3*((sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0)),60,0)
+            putsymbol('black',yoff,1,-2/100*sl+0.5*getwidth(sym1,90,0),sh-1.3*((sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0)),60,0)
         if al == 0:
-            putsymbol(yoff,1,-2/100*sl+0.5*getwidth(sym1,90,0),(sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0),60,0)
+            putsymbol('black',yoff,1,-2/100*sl+0.5*getwidth(sym1,90,0),(sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0),60,0)
     if sc == 'R2':
         if al == 1:
-            putsymbol(yoff,2,-2/100*sl+0.5*getwidth(sym1,90,0),sh-1.3*((sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0)),60,0)
+            putsymbol('black',yoff,2,-2/100*sl+0.5*getwidth(sym1,90,0),sh-1.3*((sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0)),60,0)
         if al == 0:
-            putsymbol(yoff,2,-2/100*sl+0.5*getwidth(sym1,90,0),(sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0),60,0)
+            putsymbol('black',yoff,2,-2/100*sl+0.5*getwidth(sym1,90,0),(sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0),60,0)
 
-    putsymbol(yoff,sym2,102/100*sl+0.5*getwidth(sym2,90,0),(sh-getheight(sym2,90,0))/2,90,0)
-    putsymbol(yoff,sym1,-2/100*sl-0.5*getwidth(sym1,90,0),(sh-getheight(sym1,90,0))/2,90,0)
+    putsymbol(col,yoff,sym2,102/100*sl+0.5*getwidth(sym2,90,0),(sh-getheight(sym2,90,0))/2,90,0)
+    putsymbol(col,yoff,sym1,-2/100*sl-0.5*getwidth(sym1,90,0),(sh-getheight(sym1,90,0))/2,90,0)
+
+    if sc == 'S':
+        putsymbol('red',yoff,'C',-2/100*sl-0.5*getwidth(sym1,90,0)-getwidth('_S',90,0),(sh-getheight(sym2,90,0))/2,90,0)
+    if sc == 'T':
+        putsymbol('red',yoff,'T',-2/100*sl-0.5*getwidth(sym1,90,0)-getwidth('_T',90,0),(sh-getheight(sym2,90,0))/2,90,0)
+        
     
     
     if sc == "C" or sc == "D" or sc == "CI" or sc == "DI":
@@ -267,17 +302,23 @@ def genscale(yoff,sc):
         #1-10 Labels
         for x in range(1,11):  
             if x == 10:
-                putsymbol(yoff,1,func(x),sth,90,0)        
+                putsymbol(col,yoff,1,func(x),sth,90,0)        
             else:
-                putsymbol(yoff,x,func(x),sth,90,0)
+                putsymbol(col,yoff,x,func(x),sth,90,0)
 
         #0.1-0.9 Labels
         for x in range(11,20):
-            putsymbol(yoff,x-10,func(x/10),round(sth*0.85),60,0)
+            putsymbol(col,yoff,x-10,func(x/10),round(sth*0.85),60,0)
 
         #Gauge Points
         puttick(yoff,func(math.pi),round(sth),stt)
-        putsymbol(yoff,'π',func(math.pi),round(sth),90,0)    
+        putsymbol(col,yoff,'π',func(math.pi),round(sth),90,0)
+
+    if sc == "C" or sc == "D":
+        if yoff < 1600+oY:
+            #r Gauge Point
+            puttick(yoff,func(18/math.pi),round(sth),stt)
+            putsymbol('black',yoff,'r',func(18/math.pi),round(sth),90,0)
             
     if sc == "A" or sc == "B":
 
@@ -298,15 +339,15 @@ def genscale(yoff,sc):
         #1-10 Labels
         for x in range(1,11):  
             if x == 10:
-                putsymbol(yoff,1,func(x),sth,90,0)
-                putsymbol(yoff,1,func(x*10),sth,90,0)
+                putsymbol('black',yoff,1,func(x),sth,90,0)
+                putsymbol('black',yoff,1,func(x*10),sth,90,0)
             else:
-                putsymbol(yoff,x,func(x),sth,90,0)
-                putsymbol(yoff,x,func(x*10),sth,90,0)
+                putsymbol('black',yoff,x,func(x),sth,90,0)
+                putsymbol('black',yoff,x,func(x*10),sth,90,0)
                 
         #Gauge Points
         puttick(yoff,func(math.pi),round(sth),stt)
-        putsymbol(yoff,'π',func(math.pi),round(sth),90,0)
+        putsymbol('black',yoff,'π',func(math.pi),round(sth),90,0)
 
     if sc == "K":
         for b in range(0,3):
@@ -323,13 +364,13 @@ def genscale(yoff,sc):
         f=75
         for x in range(1,11):  
             if x == 10:
-                putsymbol(yoff,1,func(x),sth,f,0)
-                putsymbol(yoff,1,func(x*10),sth,f,0)
-                putsymbol(yoff,1,func(x*100),sth,f,0)
+                putsymbol('black',yoff,1,func(x),sth,f,0)
+                putsymbol('black',yoff,1,func(x*10),sth,f,0)
+                putsymbol('black',yoff,1,func(x*100),sth,f,0)
             else:
-                putsymbol(yoff,x,func(x),sth,f,0)
-                putsymbol(yoff,x,func(x*10),sth,f,0)
-                putsymbol(yoff,x,func(x*100),sth,f,0)
+                putsymbol('black',yoff,x,func(x),sth,f,0)
+                putsymbol('black',yoff,x,func(x*10),sth,f,0)
+                putsymbol('black',yoff,x,func(x*100),sth,f,0)
 
     if sc == 'R1':
 
@@ -343,14 +384,14 @@ def genscale(yoff,sc):
 
         #1-10 Labels
         for x in range(1,4):          
-            putsymbol(yoff,x,func(10*x),sth,90,0)
+            putsymbol('black',yoff,x,func(10*x),sth,90,0)
 
         #0.1-3.1 Labels
         for x in range(11,20):
-            putsymbol(yoff,x-10,func(x),sth,60,0)
+            putsymbol('black',yoff,x-10,func(x),sth,60,0)
         for x in range(21,30):
-            putsymbol(yoff,x-20,func(x),sth,60,0)
-        putsymbol(yoff,1,func(31),sth,60,0)
+            putsymbol('black',yoff,x-20,func(x),sth,60,0)
+        putsymbol('black',yoff,1,func(31),sth,60,0)
 
         #puttick(yoff,sl,round(sth),stt)
 
@@ -366,16 +407,16 @@ def genscale(yoff,sc):
 
         #1-10 Labels
         for x in range(4,10):          
-            putsymbol(yoff,x,func(10*x)+shift,sth,90,0)
-        putsymbol(yoff,1,sl,sth,90,0)
+            putsymbol('black',yoff,x,func(10*x)+shift,sth,90,0)
+        putsymbol('black',yoff,1,sl,sth,90,0)
 
         #0.1-3.1 Labels
         for x in range(32,40):
-            putsymbol(yoff,x%10,func(x)+shift,sth,60,0)
+            putsymbol('black',yoff,x%10,func(x)+shift,sth,60,0)
         for x in range(41,50):
-            putsymbol(yoff,x%10,func(x)+shift,sth,60,0)
+            putsymbol('black',yoff,x%10,func(x)+shift,sth,60,0)
         
-    if sc == "CF" or sc == "DF": #or s == "CIF"
+    if sc == "CF" or sc == "DF":
 
         #Ticks
         pat(yoff,func,med,100,301,0,100,0,1,1,shift)
@@ -388,40 +429,66 @@ def genscale(yoff,sc):
         pat(yoff,func,xs,100,201,0,1,1,0,5,shift)
         pat(yoff,func,xs,200,314,0,2,1,0,10,shift)
         pat(yoff,func,xs,316,401,0,2,1,0,10,-1*sl+shift)
-        #-1*sl+shift is the way to go from now on!!
         pat(yoff,func,xs,400,1001,0,5,1,0,10,-1*sl+shift)
 
         #1-10 Labels
         for x in range(1,4):  
-            putsymbol(yoff,x,func(x)+shift,sth,90,0)        
+            putsymbol('black',yoff,x,func(x)+shift,sth,90,0)        
         for x in range(4,10):
-            putsymbol(yoff,x,func(x)-sl+shift,sth,90,0)
+            putsymbol('black',yoff,x,func(x)-sl+shift,sth,90,0)
 
         #0.1-0.9 Labels
         for x in range(11,20):
-            putsymbol(yoff,x-10,func(x/10)+shift,round(sth*0.85),60,0)  
+            putsymbol('black',yoff,x-10,func(x/10)+shift,round(sth*0.85),60,0)  
 
         #Gauge Points
         puttick(yoff,func(math.pi)+shift,round(sth),stt)
-        putsymbol(yoff,'π',func(math.pi)+shift,round(sth),90,0)
+        putsymbol('black',yoff,'π',func(math.pi)+shift,round(sth),90,0)
         puttick(yoff,func(math.pi)-sl+shift,round(sth),stt)
-        putsymbol(yoff,'π',func(math.pi)-sl+shift,round(sth),90,0)
+        putsymbol('black',yoff,'π',func(math.pi)-sl+shift,round(sth),90,0)
+
+    if sc == 'CIF':
+
+        #Ticks
+        pat(yoff,func,med,100,301,0,100,0,1,1,0)
+        pat(yoff,func,med,400,1001,0,100,0,1,1,sl)
+
+        pat(yoff,func,xl,200,301,50,100,0,1,1,0)
+        pat(yoff,func,sm,100,201,0,5,0,1,1,0)
+        pat(yoff,func,sm,200,321,0,10,0,1,1,0)
+        pat(yoff,func,xl,320,1001,50,100,0,150,1000,sl)
+        pat(yoff,func,sm,310,1001,0,10,1,150,100,sl)
+        pat(yoff,func,xs,100,201,0,1,1,0,5,0)
+        pat(yoff,func,xs,200,321,0,2,1,0,10,0)
+        pat(yoff,func,xs,310,401,0,2,1,0,10,sl)
+        pat(yoff,func,xs,400,1001,0,5,1,0,10,sl)
+
+        #1-10 Labels
+        for x in range(4,10):  
+            putsymbol('red',yoff,x,func(x)+sl,sth,90,0)        
+        for x in range(1,4):
+            putsymbol('red',yoff,x,func(x),sth,90,0)
+
+        #0.1-0.9 Labels
+        for x in range(11,20):
+            putsymbol('red',yoff,x-10,func(x/10),round(sth*0.85),60,0)  
         
     if sc == 'L':
         
         #Ticks
-        pat(yoff,func,med,0,1001,0,10,1,50,100,0)
+        pat(yoff,func,med,0,1001,0,10,1,50,50,0)
         pat(yoff,func,xl,1,1001,50,100,0,1,1,0)
+        pat(yoff,func,mxl,0,1001,0,100,0,1,1,0)
         pat(yoff,func,xs,1,1001,0,2,1,0,50,0)
 
         #Labels
         for x in range(0,11):  
             if x == 0:
-                putsymbol(yoff,0,func(x),sth,90,0)
+                putsymbol('black',yoff,0,func(x),sth,90,0)
             if x == 10:
-                putsymbol(yoff,1,func(x),sth,90,0)
+                putsymbol('black',yoff,1,func(x),sth,90,0)
             elif x in range(1,10):
-                putsymbol(yoff,'.'+str(x),func(x),sth,90,0)
+                putsymbol('black',yoff,'.'+str(x),func(x),sth,90,0)
 
     if sc == 'S':
 
@@ -441,19 +508,22 @@ def genscale(yoff,sc):
         #Degree Labels
 
         for x in range(6,16):  
-            putsymbol(yoff,str(x),func(x)+1.2/2*getwidth(x,50,1),sth,50,0)
-            putsymbol(yoff,"<"+str(90-x),func(x)-1.9/2*getwidth(90-x,50,1),sth,50,1)
+            putsymbol('black',yoff,str(x),func(x)+1.2/2*getwidth(x,50,1),sth,50,0)
+            putsymbol('red',yoff,str(90-x),func(x)-1.4/2*getwidth(90-x,50,1),sth,50,1)
 
         for x in range(16,20):
-            putsymbol(yoff,str(x),func(x)+1.2/2*getwidth(x,55,1),sth,55,0)
+            putsymbol('black',yoff,str(x),func(x)+1.2/2*getwidth(x,55,1),sth,55,0)
           
         for x in range(20,71,5):  
             if (x%5 == 0 and x < 40) or x%10 == 0:
-                putsymbol(yoff,str(x),func(x)+1.2/2*getwidth(x,55,1),sth,55,0)
+                putsymbol('black',yoff,str(x),func(x)+1.2/2*getwidth(x,55,1),sth,55,0)
                 if x != 20:
-                    putsymbol(yoff,"<"+str(90-x),func(x)-1.9/2*getwidth(90-x,55,1),sth,55,1)
+                    if 90-x != 40:
+                        putsymbol('red',yoff,str(90-x),func(x)-1.4/2*getwidth(90-x,55,1),sth,55,1)
+                    if 90-x == 40:
+                        putsymbol('red',yoff+11,str(40),func(x)-1.4/2*getwidth(90-x,55,1),sth,55,1)
 
-        putsymbol(yoff,90,sl,sth,60,0)
+        putsymbol('black',yoff,90,sl,sth,60,0)
 
     if sc == 'T':
 
@@ -473,18 +543,18 @@ def genscale(yoff,sc):
         #Degree Labels
         f=1.1
         for x in range(6,16):  
-            putsymbol(yoff,str(x),func(x)+1.2/2*getwidth(x,50,1),f*sth,50,0)
-            putsymbol(yoff,"<"+str(90-x),func(x)-1.9/2*getwidth(90-x,50,1),f*sth,50,1)
+            putsymbol('black',yoff,str(x),func(x)+1.2/2*getwidth(x,50,1),f*sth,50,0)
+            putsymbol('red',yoff,str(90-x),func(x)-1.4/2*getwidth(90-x,50,1),f*sth,50,1)
 
         for x in range(16,21):
-            putsymbol(yoff,str(x),func(x)+1.2/2*getwidth(x,55,1),f*sth,55,0)
+            putsymbol('black',yoff,str(x),func(x)+1.2/2*getwidth(x,55,1),f*sth,55,0)
 
         for x in range(25,41,5):  
             if x%5 == 0:
-                putsymbol(yoff,str(x),func(x)+1.2/2*getwidth(x,55,1),f*sth,55,0)
-                putsymbol(yoff,"<"+str(90-x),func(x)-1.9/2*getwidth(90-x,55,1),f*sth,55,1)
+                putsymbol('black',yoff,str(x),func(x)+1.2/2*getwidth(x,55,1),f*sth,55,0)
+                putsymbol('red',yoff,str(90-x),func(x)-1.4/2*getwidth(90-x,55,1),f*sth,55,1)
 
-        putsymbol(yoff,45,sl,f*sth,60,0)
+        putsymbol('black',yoff,45,sl,f*sth,60,0)
 
     if sc == 'ST':
 
@@ -505,13 +575,13 @@ def genscale(yoff,sc):
                 puttick(yoff,func(x/1000),round(xs*sth),stt)
 
         #Degree Labels
-        putsymbol(yoff,'1°',func(1),sth,90,0)
+        putsymbol('black',yoff,'1°',func(1),sth,90,0)
         for x in range(6,10):
-            putsymbol(yoff,"."+str(x),func(x/10),sth,90,0)
+            putsymbol('black',yoff,"."+str(x),func(x/10),sth,90,0)
         for x in range(1,4):
-            putsymbol(yoff,str(x+0.5),func(x+0.5),sth,90,0)
+            putsymbol('black',yoff,str(x+0.5),func(x+0.5),sth,90,0)
         for x in range(2,6):
-            putsymbol(yoff,str(x),func(x),sth,90,0)
+            putsymbol('black',yoff,str(x),func(x),sth,90,0)
 
 #----------------------Line Drawing Functions----------------------------
 
@@ -609,7 +679,7 @@ def metalcutoffs(y0): #Use to temporarily view the metal pieceboundaries
 
 #Turn on and off final render and diagnostic
 render = 1
-diagnostic = 1
+diagnostic = 0
 
 if render == 1:
     
@@ -625,18 +695,19 @@ if render == 1:
     al=1
     genscale(110+oY,'L')
     genscale(320+oY,'DF')
-    genscale(693+oY,'CI')
+    genscale(800+oY,'CI')
     genscale(960+oY,'C')
 
     al=0
     genscale(480+oY,'CF')
+    genscale(640+oY,'CIF')
     genscale(1120+oY,'D')
     genscale(1280+oY,'R1')
     genscale(1435+oY,'R2')
 
-    putsymbol(25+oY,'MODEL 1000',(width-2*oX)*1/4-li,0,90,0)
-    putsymbol(25+oY,'LEFT HANDED LIMAÇON 2020',(width-2*oX)*2/4-li+oX,0,90,0)
-    putsymbol(25+oY,'KWENA & TOOR CO.',(width-2*oX)*3/4-li,0,90,0)
+    putsymbol('red',25+oY,'BOGELEX 1000',(width-2*oX)*1/4-li,0,90,0)
+    putsymbol('red',25+oY,'LEFT HANDED LIMAÇON 2020',(width-2*oX)*2/4-li+oX,0,90,0)
+    putsymbol('red',25+oY,'KWENA & TOOR CO.',(width-2*oX)*3/4-li,0,90,0)
 
     #Back Scale
     al=1
@@ -673,22 +744,23 @@ if diagnostic == 1:
     oX=0 #x dir margins
     oY=0 #y dir margins
     width = 7000
-    height = 160*23
+    height = 160*24
     li = round(width/2-sl/2) #update left index
     img=Image.new('RGB',(width,height),'white') 
     draw=ImageDraw.Draw(img)
 
-    putsymbol(50+oY,'Diagnostic Test Print of Available Scales',width/2-li,0,140,0)
-    putsymbol(200+oY,'A B C D K R1 R2 CI DI CF DF L S T ST',width/2-li,0,120,0)
+    putsymbol('black',50+oY,'Diagnostic Test Print of Available Scales',width/2-li,0,140,0)
+    putsymbol('black',200+oY,'A B C D K R1 R2 CI DI CF DF CIF L S T ST',width/2-li,0,120,0)
     al=1
     k = 120+sh
 
     scalelist=['A','B','C','D',
                'K','R1','R2','CI',
-               'DI','CF','DF','L',
+               'DI','CF','DF','CIF','L',
                'S','T','ST']
+    #scalelist=['CF','CIF','CI','C']
 
-    for n in range(0,15):
+    for n in range(0,len(scalelist)):
         genscale(k+(1+n)*200,scalelist[n])
 
     img.save('DiagnosticPrint.png','PNG')
@@ -699,13 +771,11 @@ if diagnostic == 1:
 # A B C D K R1 R2 CI DI CF DF L S T ST
 # Layout:
 # |  K,  A  [ B, T, ST, S ] D,  DI    |
-# |  L,  DF [ CF,  CI,  C ] D, R1, R2 |
+# |  L,  DF [ CF,CIF,CI,C ] D, R1, R2 |
 
 #To-Do:
-    #CIF scales <<< I HATE U 
+    #Graphical Description of how the scales are constructed
 
     #maybe an easy to use interface for customizations. . nah
-    #place phrases ("slide rule", "keuffel esser", "by Javier", etc)
-    #create cut out patterns
 
     #MODEL 1000 -- LEFT HANDED LIMACON 2020 -- KWENA & TOOR CO.
