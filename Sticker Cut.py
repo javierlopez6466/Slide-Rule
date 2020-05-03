@@ -183,6 +183,7 @@ def extend(image,y,d,A): #Use to create bleed for sticker cutouts
 
 def genscale(yoff,sc):
 
+    #Generating Functions for the Scales
     def func(x):
         if sc == 'C' or sc == 'D' or sc == 'CF' or sc == 'DF':
             return round(sl*math.log10(x))
@@ -205,7 +206,7 @@ def genscale(yoff,sc):
         if sc == 'ST':
             return round(sl*math.log10(100*(math.sin(math.radians(x))+math.tan(math.radians(x)))/2))
 
-    #scale labels
+    #Scale Symbol Labels
     if sc == 'A':
         shift = 0
         sym1 = 'A'
@@ -234,15 +235,12 @@ def genscale(yoff,sc):
     if sc == 'R1':
         shift = 0
         sym1 = 'R'
-        #sym12 = '1'
-        #sym20 = '√x'
         sym2 = '√x'
         col = 'black'
     if sc == 'R2':
         shift = -sl
         sym1 = 'R'
-        #sym12 = '2'
-        sym2 = '√x' #special merger?
+        sym2 = '√x' 
         col = 'black'
     if sc == 'CI':
         shift = 0
@@ -287,29 +285,34 @@ def genscale(yoff,sc):
     if sc == 'ST':
         shift = 0
         sym1 = 'ST'
-        sym2 = 'θ<5.7°' #eh,..
+        sym2 = 'θ<5.7°' 
         col = 'black'
-    if sc == 'R1':
-        if al == 1:
-            putsymbol('black',yoff,1,-2/100*sl+0.5*getwidth(sym1,90,0),sh-1.3*((sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0)),60,0)
-        if al == 0:
-            putsymbol('black',yoff,1,-2/100*sl+0.5*getwidth(sym1,90,0),(sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0),60,0)
-    if sc == 'R2':
-        if al == 1:
-            putsymbol('black',yoff,2,-2/100*sl+0.5*getwidth(sym1,90,0),sh-1.3*((sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0)),60,0)
-        if al == 0:
-            putsymbol('black',yoff,2,-2/100*sl+0.5*getwidth(sym1,90,0),(sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0),60,0)
 
+    #Place Index Symbols (Left and Right)
     putsymbol(col,yoff,sym2,102/100*sl+0.5*getwidth(sym2,90,0),(sh-getheight(sym2,90,0))/2,90,0)
     putsymbol(col,yoff,sym1,-2/100*sl-0.5*getwidth(sym1,90,0),(sh-getheight(sym1,90,0))/2,90,0)
 
+    #Exceptions / Special Symbol Rules for Rs, S and T
+    if sc == 'R1':
+        if al == 1:
+            putsymbol('black',yoff,1,-2/100*sl+0.5*getwidth(sym1,90,0),
+                      sh-1.3*((sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0)),60,0)
+        if al == 0:
+            putsymbol('black',yoff,1,-2/100*sl+0.5*getwidth(sym1,90,0),
+                      (sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0),60,0)
+    if sc == 'R2':
+        if al == 1:
+            putsymbol('black',yoff,2,-2/100*sl+0.5*getwidth(sym1,90,0),
+                      sh-1.3*((sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0)),60,0)
+        if al == 0:
+            putsymbol('black',yoff,2,-2/100*sl+0.5*getwidth(sym1,90,0),
+                      (sh-getheight(sym1,90,0))/2+0.75*getheight(sym1,90,0),60,0)
     if sc == 'S':
         putsymbol('red',yoff,'C',-2/100*sl-0.5*getwidth(sym1,90,0)-getwidth('_S',90,0),(sh-getheight(sym2,90,0))/2,90,0)
     if sc == 'T':
         putsymbol('red',yoff,'T',-2/100*sl-0.5*getwidth(sym1,90,0)-getwidth('_T',90,0),(sh-getheight(sym2,90,0))/2,90,0)
         
-    
-    
+    #Tick Placement
     if sc == "C" or sc == "D" or sc == "CI" or sc == "DI":
     
         #Ticks
@@ -607,7 +610,7 @@ def genscale(yoff,sc):
 
 #----------------------Line Drawing Functions----------------------------
 
-def putborders(y0): #Use to place initial borders y0 = vertical offset
+def putborders(y0): #Place initial borders around scales y0 = vertical offset
 
     #Main Frame
     horizontals=[ y0,  479+y0,  1119+y0,  1598+y0  ]
@@ -699,21 +702,22 @@ def metalcutoffs(y0): #Use to temporarily view the metal pieceboundaries
 
 #----------------------Action------------------------------------------
 
-#Turn on and off final render and diagnostic
+#Turn on and off final render, diagnostic, and stickerprint
 render = 1
 diagnostic = 0
-stickerprint = 0 #Requires render == 1 and COMMENTED putborders
-external = 0 #MERGE INTO STICKERPRINT LATER
+stickerprint = 1 
 
-if render == 1:
+if render == 1 or stickerprint == 1:
     
     # 'Scale Cutting Pattern'
-    side='front'
-    #putborders(oY)     #COMMENT OUT putborders when doing STICKER PRINT
-    #metalcutoffs(oY)
-    side='back'
-    #putborders(1600+2*oY)
-    #metalcutoffs(1600+2*oY)
+
+    if stickerprint != 1:
+        side='front'
+        putborders(oY)
+        #metalcutoffs(oY)
+        side='back'
+        putborders(1600+2*oY)
+        #metalcutoffs(1600+2*oY)
 
     #Front Scale
     al=1
@@ -733,10 +737,6 @@ if render == 1:
     putsymbol('red',25+oY,'LEFT HANDED LIMAÇON 2020',(width-2*oX)*2/4-li+oX,0,90,0)
     putsymbol('red',25+oY,'KWENA & TOOR CO.',(width-2*oX)*3/4-li,0,90,0)
 
-    #for y in range(0,height):
-        #img.putpixel((oX+4000+3250,y),(255,0,0))
-        #img.putpixel((oX+4000-3250,y),(255,0,0))
-
     #Back Scale
     al=1
     genscale(110+1600+2*oY,'K')
@@ -754,8 +754,7 @@ if render == 1:
     img.show()
     
     # 'Scale Etching Pattern'
-    etch = 0 #TURN OFF etch to do sticker pattern!!
-    if etch == 1:
+    if stickerprint != 1:
 
         #Clear Image
         img=Image.new('RGB',(width,height),'white') 
@@ -771,6 +770,9 @@ if render == 1:
 
 
 if diagnostic == 1:
+
+    #If you're reading this, you're a real one
+    # +5 brownie points to you
 
     oX=0 #x dir margins
     oY=0 #y dir margins
@@ -794,17 +796,13 @@ if diagnostic == 1:
     for n in range(0,len(scalelist)):
         genscale(k+(1+n)*200,scalelist[n])
 
-    #extend(img,480+sh-1,'down',30)
-    
-    #for x in range(0,width):
-        #img.putpixel((x,480+sh),(255,0,0)) 
-
     img.save('DiagnosticPrint.png','PNG')
     img.show()
 
-#--------- Stickering Below
+#--------- Stickering  (Requires Special Functions) ---------------
 
-d=0 #Delineate (yes or no)
+cutcolor = (0,0,255) #color which indicates CUT (blu)
+d=1 #Delineate (yes or no)
 
 def drawbox(image,x1,y1,x2,y2):
     img=image
@@ -820,11 +818,44 @@ def drawbox(image,x1,y1,x2,y2):
             img.putpixel((x1,y),cutcolor)
             img.putpixel((x2,y),cutcolor)
 
+wE=20 #width of extension cross arms
+
+def drawcorners(image,x1,y1,x2,y2):
+    img=image
+    if d == 1:
+        #(x1,y1) First corner of box
+        #(x2,y2) Second corner of box
+        
+        for x in range (x1-wE,x1+wE):
+            img.putpixel((x,y1),cutcolor)
+            img.putpixel((x,y2),cutcolor)
+        for x in range (x2-wE,x2+wE):
+            img.putpixel((x,y1),cutcolor)
+            img.putpixel((x,y2),cutcolor)
+        for y in range (y1-wE,y1+wE):
+            img.putpixel((x1,y),cutcolor)
+            img.putpixel((x2,y),cutcolor)
+        for y in range (y2-wE,y2+wE):
+            img.putpixel((x1,y),cutcolor)
+            img.putpixel((x2,y),cutcolor)
+
+def transcribe(x0,y0,dx,dy,xT,yT):
+
+        #(x0,y0) First corner of SOURCE (rendering)
+        #(dx,dy) Width and Length of SOURCE chunk to transcribe
+        #(xT,yT) Target corner of DESTINATION; where to in-plop (into stickerprint)
+
+        for x in range(0,dx):
+            for y in range(0,dy):
+                r, g, b = img.getpixel((x0+x,y0+y))
+                img2.putpixel((xT+x,yT+y),(r,g,b))
+
 if stickerprint == 1:
 
     # Code Names
-    #(fs) | UL,UM,UR [ ML,MM,MR ] LL,LM,LR | Upper Middle Lower, Left Middle Right
+    #(fs) | UL,UM,UR [ ML,MM,MR ] LL,LM,LR | 
     #(bs) | UL,UM,UR [ ML,MM,MR ] LL,LM,LR |
+    # Upper Middle Lower, Left Middle Right
     # (18 total stickers)
 
     oX2=50 #x dir margins
@@ -833,65 +864,53 @@ if stickerprint == 1:
     ext=20 #extension amount
     width = 6500+2*oX2
     height = 5000
-    cutcolor = (0,0,255) #color which indicates CUT (blu)
 
     img2=Image.new('RGB',(width,height),'white') 
     draw=ImageDraw.Draw(img2)
 
-    def transcribe(x0,y0,dx,dy,xT,yT):
-
-        #(x0,y0) First corner of SOURCE
-        #(dx,dy) Width and Length of SOURCE chunk to transcribe
-        #(xT,yT) Target corner of DESTINATION; where to in-plop
-
-        for x in range(0,dx):
-            for y in range(0,dy):
-                r, g, b = img.getpixel((x0+x,y0+y))
-                img2.putpixel((xT+x,yT+y),(r,g,b))
-
     #fsUM,MM,LM:
     l=0
 
-    
     l=oY2+oA
     transcribe(oX+750,oY,6500,480,oX2,l)
-    #extend(img2,l+480-1,'down',ext)
-    drawbox(img2,oX2,l-oA,oX2+6500,l+480)
+    extend(img2,l+480-1,'down',ext)
+    drawcorners(img2,oX2,l-oA,oX2+6500,l+480)
     
     l=l+480+oA
     transcribe(oX+750,oY+481,6500,640,oX2,l)
-    #extend(img2,l+1,'up',ext)
-    #extend(img2,l+640-1,'down',ext)
-    drawbox(img2,oX2,l,oX2+6500,l+640)
+    extend(img2,l+1,'up',ext)
+    extend(img2,l+640-1,'down',ext)
+    drawcorners(img2,oX2,l,oX2+6500,l+640)
 
     l=l+640+oA
     transcribe(oX+750,oY+1120,6500,480,oX2,l)
-    #extend(img2,l+1,'up',ext)
-    #extend(img2,l+480-1,'down',ext)
-    drawbox(img2,oX2,l,oX2+6500,l+480+oA)
+    extend(img2,l+1,'up',ext)
+    extend(img2,l+480-1,'down',ext)
+    drawcorners(img2,oX2,l,oX2+6500,l+480+oA)
 
     #bsUM,MM,LM:
 
     l=l+480+oA+oA+oA
 
     transcribe(oX+750,oY+1600+oY,6500,480,oX2,l)
-    #extend(img2,l+480-1,'down',ext)
-    drawbox(img2,oX2,l-oA,oX2+6500,l+480)
+    extend(img2,l+480-1,'down',ext)
+    drawcorners(img2,oX2,l-oA,oX2+6500,l+480)
 
     l=l+480+oA
     transcribe(oX+750,oY+1600+oY+481-3,6500,640,oX2,l)
-    #extend(img2,l+1,'up',ext)
-    #extend(img2,l+640-1,'down',ext)
-    drawbox(img2,oX2,l,oX2+6500,l+640)
+    extend(img2,l+1,'up',ext)
+    extend(img2,l+640-1,'down',ext)
+    drawcorners(img2,oX2,l,oX2+6500,l+640)
 
     l=l+640+oA
     transcribe(oX+750,oY+1600+oY+1120,6500,480,oX2,l)
-    #extend(img2,l+1,'up',ext)
-    #extend(img2,l+480-1,'down',ext)
-    drawbox(img2,oX2,l,oX2+6500,l+480+oA)
+    extend(img2,l+1,'up',ext)
+    extend(img2,l+480-1,'down',ext)
+    drawcorners(img2,oX2,l,oX2+6500,l+480+oA)
 
     yB=3750
-    
+
+    #f/bsUL/R,LL/R:
     for i in range(0,4):
         for j in range(0,2):
             drawbox(img2,
@@ -901,83 +920,42 @@ if stickerprint == 1:
                     yB+(oA+480+oA)*j+(480+oA),
                     )
 
+    #f/bsML/R:
     for i in range(0,4):
         drawbox(img2,
                 oA+(oA+510+oA)*4+oA+(640+oA)*i,
                 yB,
                 oA+(oA+510+oA)*4+oA+(640+oA)*i+640,
                 yB+750+oA)
+        
+    #Screw Holes
+    points=[
+                [oA +oA+3*120,yB +oA+160],
+                [oA +oA+160,  yB +oA+480 +oA +2*160],
+                [oA +oA+2*160,yB +oA+480 +oA +160],
 
-    r=34
+                [oA +oA+510 +oA +30+120, yB +oA+160],
+                [oA +oA+510 +oA +30+160, yB +oA+480 +oA +160],
+                [oA +oA+510 +oA +30+2*160, yB +oA+480 +oA +2*160],
 
-    points=[[oA+320,yB+oA+360],
-            [a1x,yB+oA+510+oA+510-360]
-            ]
+                [oA +2*(oA+510+oA) +oA+2*160, yB +oA+160],
+                [oA +2*(oA+510+oA) +oA+160, yB +oA+2*160],
+                [oA +2*(oA+510+oA) +oA+3*120, yB +oA+480 +oA +160],
 
-    for i in range(0,2):
+                [oA +3*(oA+510+oA) +30+160, yB +oA+160],
+                [oA +3*(oA+510+oA) +30+2*160, yB +oA+2*160],
+                [oA +3*(oA+510+oA) +30+120, yB +oA+480 +oA +160]
+           ]
+
+    r=34 #(2.5mm diameter)
+    for i in range(0,12):
         draw.ellipse((points[i][0]-r,points[i][1]-r,
                       points[i][0]+r,points[i][1]+r),
                       fill = 'white',
-                      outline = 'black')
+                      outline = cutcolor)
 
-    img2.save('StickerCutUNLINED.png','PNG')
+    img2.save('StickerCutLINED.png','PNG')
     img2.show()
-
-    #img2.save('StickerCutLINED.png','PNG')
-    #img2.show()
-
-    #3800
-
-if external == 1:
-    oA=50 #overhang amount
-
-    width = 6500
-    height = 2100
-    cutcolor = (0,0,255) #color which indicates CUT (blu)
-
-    img3=Image.new('RGB',(width,height),'white') 
-    draw=ImageDraw.Draw(img3)
-
-    def drawbox(x1,y1,x2,y2):
-
-        if d == 1:
-            #(x1,y1) First corner of box
-            #(x2,y2) Second corner of box
-
-            for x in range(x1,x2):
-                img3.putpixel((x,y1),cutcolor)
-                img3.putpixel((x,y2),cutcolor)
-
-            for y in range(y1,y2):
-                img3.putpixel((x1,y),cutcolor)
-                img3.putpixel((x2,y),cutcolor)
-
-    #l=0  #bad need to turn the two small pieces on their side to make them fit smh
-
-    for i in range(0,4):
-        for j in range(0,2):
-            drawbox(oA+(oA+510+oA)*i,
-                    (oA+480+oA)*j,
-                    oA+(oA+510+oA)*i+(510+oA),
-                    (oA+480+oA)*j+(480+oA),
-                    )
-
-    for i in range(0,4):
-        drawbox(oA+(oA+510+oA)*4+oA+(640+oA)*i,
-                0,
-                oA+(oA+510+oA)*4+oA+(640+oA)*i+640,
-                750+oA)
-    
-    #drawbox(0,        0,oA+510,          oA+480)
-    #drawbox(oA+510+oA,0,oA+510+oA+510+oA,oA+480)
-
-    #l=l+oA+480+oA
-
-    #drawbox(0,        l,oA+510,          l+oA+480)
-    #drawbox(oA+510+oA,l,oA+510+oA+510+oA,l+oA+480)
-
-    img3.save('Boundary.png','PNG')
-    img3.show()
 
 print ("The program took", time.time() - start_time, "to run")
 
@@ -993,4 +971,4 @@ print ("The program took", time.time() - start_time, "to run")
 
     #maybe an easy to use interface for customizations. . nah
 
-    #MODEL 1000 -- LEFT HANDED LIMACON 2020 -- KWENA & TOOR CO.
+    #MODEL 1000 -- LEFT HANDED LIMACON 2020 -- KWENA & TOOR CO.S
