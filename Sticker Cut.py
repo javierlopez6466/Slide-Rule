@@ -1,4 +1,4 @@
-#Most Recent Update (5/1/20)
+#Most Recent Update (10/29/20)
 
 # **** if you need pure black print, simply replace all 'black'
 # with 'red' in a COPY (and remove red from putsym options)****
@@ -23,8 +23,8 @@ from PIL import Image, ImageFont, ImageDraw
 import time
 start_time = time.time()
 
-oX=100 #x dir margins
-oY=100 #y dir margins
+oX=100 #x margins
+oY=100 #y margins
 width = 8000+2*oX 
 height = 1600*2+3*oY
 img=Image.new('RGB',(width,height),'white') 
@@ -703,9 +703,9 @@ def metalcutoffs(y0): #Use to temporarily view the metal pieceboundaries
 #----------------------Action------------------------------------------
 
 #Turn on and off final render, diagnostic, and stickerprint
-render = 1
+render = 0
 diagnostic = 0
-stickerprint = 1 
+stickerprint = 1
 
 if render == 1 or stickerprint == 1:
     
@@ -768,7 +768,6 @@ if render == 1 or stickerprint == 1:
         img.save('ScaleEtchingPattern.png','PNG')
         img.show()
 
-
 if diagnostic == 1:
 
     #If you're reading this, you're a real one
@@ -804,19 +803,19 @@ if diagnostic == 1:
 cutcolor = (0,0,255) #color which indicates CUT (blu)
 d=1 #Delineate (yes or no)
 
-def drawbox(image,x1,y1,x2,y2):
+def drawbox(image,x0,y0,dx,dy):
     img=image
     if d == 1:
         #(x1,y1) First corner of box
-        #(x2,y2) Second corner of box
+        # dx, dy extension of box in positive direction
 
-        for x in range(x1,x2):
-            img.putpixel((x,y1),cutcolor)
-            img.putpixel((x,y2),cutcolor)
+        for x in range(x0,x0+dx):
+            img.putpixel((x,y0),cutcolor)
+            img.putpixel((x,y0+dy),cutcolor)
 
-        for y in range(y1,y2):
-            img.putpixel((x1,y),cutcolor)
-            img.putpixel((x2,y),cutcolor)
+        for y in range(y0,y0+dy):
+            img.putpixel((x0,y),cutcolor)
+            img.putpixel((x0+dx,y),cutcolor)
 
 wE=20 #width of extension cross arms
 
@@ -863,7 +862,7 @@ if stickerprint == 1:
     oA=50 #overhang amount
     ext=20 #extension amount
     width = 6500+2*oX2
-    height = 5000
+    height = 5075
 
     img2=Image.new('RGB',(width,height),'white') 
     draw=ImageDraw.Draw(img2)
@@ -908,47 +907,46 @@ if stickerprint == 1:
     extend(img2,l+480-1,'down',ext)
     drawcorners(img2,oX2,l,oX2+6500,l+480+oA)
 
-    yB=3750
+    yB=3720
 
-    #f/bsUL/R,LL/R:
-    for i in range(0,4):
-        for j in range(0,2):
-            drawbox(img2,
-                    oA+(oA+510+oA)*i,
-                    yB+(oA+480+oA)*j,
-                    oA+(oA+510+oA)*i+(510+oA),
-                    yB+(oA+480+oA)*j+(480+oA),
-                    )
+    box=[
+            [oA,yB,
+             510+oA,480+oA],
+            [510+3*oA,yB,
+            750+oA,640],
+            [510+750+5*oA,yB,
+            750+oA,480+oA]
+        ]
 
-    #f/bsML/R:
-    for i in range(0,4):
-        drawbox(img2,
-                oA+(oA+510+oA)*4+oA+(640+oA)*i,
-                yB,
-                oA+(oA+510+oA)*4+oA+(640+oA)*i+640,
-                yB+750+oA)
+    for i in range(0,3):
+        drawbox(img2,box[i][0],box[i][1],box[i][2],box[i][3])
+        drawbox(img2,box[i][0],box[i][1]+640+oA,box[i][2],box[i][3])
         
-    #Screw Holes
+        box[i][0] = round(2*(6.5*oA+510+2*750)-box[i][0]-box[i][2])
+
+        drawbox(img2,box[i][0],box[i][1],box[i][2],box[i][3])
+        drawbox(img2,box[i][0],box[i][1]+640+oA,box[i][2],box[i][3])
+
     points=[
-                [oA +oA+3*120,yB +oA+160],
-                [oA +oA+160,  yB +oA+480 +oA +2*160],
-                [oA +oA+2*160,yB +oA+480 +oA +160],
+              [2*oA+120,yB+oA+160],
+              [6*oA+510+750  +2*160,yB   +160],
+              [6*oA+510+750    +160,yB +2*160],
 
-                [oA +oA+510 +oA +30+120, yB +oA+160],
-                [oA +oA+510 +oA +30+160, yB +oA+480 +oA +160],
-                [oA +oA+510 +oA +30+2*160, yB +oA+480 +oA +2*160],
-
-                [oA +2*(oA+510+oA) +oA+2*160, yB +oA+160],
-                [oA +2*(oA+510+oA) +oA+160, yB +oA+2*160],
-                [oA +2*(oA+510+oA) +oA+3*120, yB +oA+480 +oA +160],
-
-                [oA +3*(oA+510+oA) +30+160, yB +oA+160],
-                [oA +3*(oA+510+oA) +30+2*160, yB +oA+2*160],
-                [oA +3*(oA+510+oA) +30+120, yB +oA+480 +oA +160]
-           ]
-
+              [2*oA+120,yB+640+oA +160],
+              [6*oA+510+750  +160,yB+640+oA   +oA+2*160],
+              [6*oA+510+750    +2*160,yB+640+oA +oA+160]
+          ]
+    
     r=34 #(2.5mm diameter)
-    for i in range(0,12):
+    
+    for i in range(0,6):
+        draw.ellipse((points[i][0]-r,points[i][1]-r,
+                      points[i][0]+r,points[i][1]+r),
+                      fill = 'white',
+                      outline = cutcolor)        
+
+        points[i][0] = round(2*(6.5*oA+510+2*750)-points[i][0])
+
         draw.ellipse((points[i][0]-r,points[i][1]-r,
                       points[i][0]+r,points[i][1]+r),
                       fill = 'white',
