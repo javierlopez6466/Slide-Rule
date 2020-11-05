@@ -1,7 +1,6 @@
 # Slide-Rule
 
-This program lets you generate complete slide rule patterns.
-It's pretty inefficient, but it works
+This program lets you generate complete slide rule patterns
 
 To run the program, you will need:
 PIL, and an installation of two fonts: cmuntt.ttf and cmunit.ttf (part of the infamous LaTeX fonts)
