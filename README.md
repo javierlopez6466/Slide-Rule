@@ -1,8 +1,9 @@
 # Slide-Rule
 
-This program lets you generate complete slide rule patterns
+This repository lets you generate complete slide rule patterns
 
 To run the program, you will need:
+to download SlideRule.py,
 PIL, and an installation of two fonts: cmuntt.ttf and cmunit.ttf (part of the infamous LaTeX fonts)
 which can be found here: https://www.freebestfonts.com/computer-modern-font
 
