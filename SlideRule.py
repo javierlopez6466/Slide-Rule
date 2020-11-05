@@ -1,22 +1,21 @@
-#Most Recent Update (10/29/20)
+'''
+Most Recent Update (11/5/20)
+Please check the readme for details!
+--------------------------------------------------------
 
-# **** if you need pure black print, simply replace all 'black'
-# with 'red' in a COPY (and remove red from putsym options)****
+Slide Rule Scale Generator 2.0 by Javier Lopez 2020
+Available Scales: A B C D K R1 R2 CI DI CF DF CIF L S T ST
 
-#--------------------------------------------------------
-
-#Slide Rule Scale Generator 1.0
-#Available Scales: A B C D K R1 R2 CI DI CF DF CIF L S T ST
-
-#Table of Contents
-#   1. Setup
-#   2. Fundamental Functions
-#   3. Scale Generating Function
-#   4. Line Drawing Functions
-#   5. Action!
-#   6. Extrabitz..
-
-#----------------------Setup----------------------------
+Table of Contents
+   1. Setup
+   2. Fundamental Functions
+   3. Scale Generating Function
+   4. Line Drawing Functions
+   5. Action!
+   6. Stickering
+   7. Extrabitz..
+'''
+#----------------------1. Setup----------------------------
 
 import math
 from PIL import Image, ImageFont, ImageDraw
@@ -47,14 +46,14 @@ mxl = 1.15
 xl = 1.3
 
 #don't touch:
-sc='A'
+sc=''
 y0 = 0 #upper level starting point for various objects (ignore me)
 yoff=100
 shift = 0 #scale shift from left index
-sym1 = "S" #left scale symbol
-sym2 = "x" #right scale symbol
+sym1 = "" #left scale symbol
+sym2 = "" #right scale symbol
 
-#----------------------Fundamental Functions----------------------------
+#----------------------2. Fundamental Functions----------------------------
 
 def puttick(yoff,x,h,t): #places an individual tick
 
@@ -159,10 +158,10 @@ def putsymbol(C,yoff,s,x,y,z,i):
         y0 = sh-1-y-h*1.2
     draw.text((x+li-round(w/2)+round(stt/2),y0+yoff),str1,font=font,fill=color)
 
-def extend(image,y,d,A): #Use to create bleed for sticker cutouts
+def extend(image,y,d,A): #Used to create bleed for sticker cutouts
 
     #image eg img, img2, etc
-    #y = y pixel row
+    #y = y pixel row to duplicate
     #d = direction ('up','down')
     #A = Amplitude (# of pixels to extend)
 
@@ -179,7 +178,7 @@ def extend(image,y,d,A): #Use to create bleed for sticker cutouts
             for yi in range(y,y+A):
                 img.putpixel((x,yi),(r,g,b))
 
-#----------------------Scale Generating Function----------------------------
+#----------------------3. Scale Generating Function----------------------------
 
 def genscale(yoff,sc):
 
@@ -292,7 +291,7 @@ def genscale(yoff,sc):
     putsymbol(col,yoff,sym2,102/100*sl+0.5*getwidth(sym2,90,0),(sh-getheight(sym2,90,0))/2,90,0)
     putsymbol(col,yoff,sym1,-2/100*sl-0.5*getwidth(sym1,90,0),(sh-getheight(sym1,90,0))/2,90,0)
 
-    #Exceptions / Special Symbol Rules for Rs, S and T
+    #Exceptions / Special Symbols for R1, R2, S, and T
     if sc == 'R1':
         if al == 1:
             putsymbol('black',yoff,1,-2/100*sl+0.5*getwidth(sym1,90,0),
@@ -312,7 +311,7 @@ def genscale(yoff,sc):
     if sc == 'T':
         putsymbol('red',yoff,'T',-2/100*sl-0.5*getwidth(sym1,90,0)-getwidth('_T',90,0),(sh-getheight(sym2,90,0))/2,90,0)
         
-    #Tick Placement
+    #Tick Placement (the bulk!)
     if sc == "C" or sc == "D" or sc == "CI" or sc == "DI":
     
         #Ticks
@@ -608,7 +607,10 @@ def genscale(yoff,sc):
         for x in range(2,6):
             putsymbol('black',yoff,str(x),func(x),sth,90,0)
 
-#----------------------Line Drawing Functions----------------------------
+#----------------------4. Line Drawing Functions----------------------------
+
+#These functions are unfortunately difficult to modify,
+#since I built them with specific numbers rather than variables
 
 def putborders(y0): #Place initial borders around scales y0 = vertical offset
 
@@ -642,9 +644,8 @@ def putborders(y0): #Place initial borders around scales y0 = vertical offset
             for y in range(Yi,Yf):
                 img.putpixel((x,y),(0,0,0))
 
-def metalcutoffs(y0): #Use to temporarily view the metal pieceboundaries
+def metalcutoffs(y0): #Use to temporarily view the metal bracket locations
     #y0 = vertical offset
-    
     b=30 #offset of metal from boundary
 
     #Initial Boundary verticals
@@ -655,6 +656,8 @@ def metalcutoffs(y0): #Use to temporarily view the metal pieceboundaries
             for y in range(y0,1600+y0):
                 img.putpixel((x,y),(230,230,230))
 
+        # ~Cute~little~visualization~
+        #
         #   0    240   480
         #   |     |     |     
         #            1       -0
@@ -685,7 +688,7 @@ def metalcutoffs(y0): #Use to temporarily view the metal pieceboundaries
         coords.append([width-coords[i][1],width-coords[i][0],
                        coords[i][2],coords[i][3]])
 
-    #Transfer coords to points for printing
+    #Transfer coords to points for printing (yeah i know it's dum)
     if side=='front':
         points=coords
     #If backside, first apply a vertical reflection
@@ -694,30 +697,41 @@ def metalcutoffs(y0): #Use to temporarily view the metal pieceboundaries
         for i in range(0,12):
             points.append([coords[i][0],coords[i][1],
                            2*y0+1600-coords[i][3],2*y0+1600-coords[i][2]])
-        
     for i in range(0,12):
         for x in range(points[i][0]-1,points[i][1]+1):
             for y in range(points[i][2]-1,points[i][3]+1):
                 img.putpixel((x,y),(234,36,98))
 
-#----------------------Action------------------------------------------
+#----------------------5. Action------------------------------------------
 
-#Turn on and off final render, diagnostic, and stickerprint
-render = 0
-diagnostic = 0
-stickerprint = 1
+#-----
 
-if render == 1 or stickerprint == 1:
+#User Prompt Section
+print("Type render, diagnostic, or stickerprint to set the desired mode")
+print("Each one does something different, so play around with it!")
+
+validmodes = ['render','diagnostic','stickerprint']
+accepted = False
+while accepted == False:
+    mode = input("Mode selection: ")
+    if mode in validmodes:
+        accepted = True
+        continue
+    else:
+        print("Check your spelling, and try again")
+#-----
+
+if mode == "render" or mode == "stickerprint":
     
-    # 'Scale Cutting Pattern'
-
-    if stickerprint != 1:
+    if mode == 'render':
         side='front'
         putborders(oY)
         #metalcutoffs(oY)
         side='back'
         putborders(1600+2*oY)
         #metalcutoffs(1600+2*oY)
+        
+        #You may like to uncomment metalcutoffs and see what happens
 
     #Front Scale
     al=1
@@ -733,6 +747,8 @@ if render == 1 or stickerprint == 1:
     genscale(1280+oY,'R1')
     genscale(1435+oY,'R2')
 
+    #These are my weirdo alternative universe "brand names", "model name", etc
+    #Feel free to comment them out
     putsymbol('red',25+oY,'BOGELEX 1000',(width-2*oX)*1/4-li,0,90,0)
     putsymbol('red',25+oY,'LEFT HANDED LIMAÇON 2020',(width-2*oX)*2/4-li+oX,0,90,0)
     putsymbol('red',25+oY,'KWENA & TOOR CO.',(width-2*oX)*3/4-li,0,90,0)
@@ -750,25 +766,12 @@ if render == 1 or stickerprint == 1:
     genscale(1120+1600+2*oY,'D')
     genscale(1360+1600+2*oY,'DI')
 
-    img.save('ScaleCuttingPattern.png','PNG')
+if mode == 'render':
+    img.save('SlideRuleScales.png','PNG')
     img.show()
-    
-    # 'Scale Etching Pattern'
-    if stickerprint != 1:
+    print("The result has been saved to SlideRuleScales.png")
 
-        #Clear Image
-        img=Image.new('RGB',(width,height),'white') 
-        draw=ImageDraw.Draw(img)
-
-        side='front'
-        putborders(oY)
-        side='back'
-        putborders(1600+2*oY)
-
-        img.save('ScaleEtchingPattern.png','PNG')
-        img.show()
-
-if diagnostic == 1:
+if mode == "diagnostic":
 
     #If you're reading this, you're a real one
     # +5 brownie points to you
@@ -790,17 +793,17 @@ if diagnostic == 1:
                'K','R1','R2','CI',
                'DI','CF','DF','CIF','L',
                'S','T','ST']
-    #scalelist=['CF','CIF','CI','C']
 
     for n in range(0,len(scalelist)):
         genscale(k+(1+n)*200,scalelist[n])
 
-    img.save('DiagnosticPrint.png','PNG')
+    img.save('Diagnostic.png','PNG')
     img.show()
+    print("The result has been saved to Diagnostic.png")
 
-#--------- Stickering  (Requires Special Functions) ---------------
+#---------------------- 6. Stickering -----------------------------
 
-cutcolor = (0,0,255) #color which indicates CUT (blu)
+cutcolor = (0,0,255) #color which indicates CUT (0,0,255 = blue)
 d=1 #Delineate (yes or no)
 
 def drawbox(image,x0,y0,dx,dy):
@@ -848,12 +851,21 @@ def transcribe(x0,y0,dx,dy,xT,yT):
             for y in range(0,dy):
                 r, g, b = img.getpixel((x0+x,y0+y))
                 img2.putpixel((xT+x,yT+y),(r,g,b))
+        '''
+        Note to self: this is such a bad way to do this, instead of
+        transcribing over literally thousands of pixels I should have
+        just generated the scales in the place where they are needed
+        '''
 
-if stickerprint == 1:
+if mode == 'stickerprint':
 
+    #Disclaimer, this section also suffers from lack of generality
+    #since I built them with specific numbers rather than variables
+    
     # Code Names
     #(fs) | UL,UM,UR [ ML,MM,MR ] LL,LM,LR | 
     #(bs) | UL,UM,UR [ ML,MM,MR ] LL,LM,LR |
+    # Front Scale, Back Scale
     # Upper Middle Lower, Left Middle Right
     # (18 total stickers)
 
@@ -937,7 +949,7 @@ if stickerprint == 1:
               [6*oA+510+750    +2*160,yB+640+oA +oA+160]
           ]
     
-    r=34 #(2.5mm diameter)
+    r=34 #(2.5mm diameter screw holes)
     
     for i in range(0,6):
         draw.ellipse((points[i][0]-r,points[i][1]-r,
@@ -952,21 +964,20 @@ if stickerprint == 1:
                       fill = 'white',
                       outline = cutcolor)
 
-    img2.save('StickerCutLINED.png','PNG')
+    img2.save('StickerCut.png','PNG')
     img2.show()
+    print('The result has been saved to StickerCut.png')
 
-print ("The program took", time.time() - start_time, "to run")
+print ("The program took", round(time.time() - start_time,2), "seconds to run")
 
-#--------------------------EXTRABITZ----------------------------
+#--------------------------7. EXTRABITZ----------------------------
 
 # A B C D K R1 R2 CI DI CF DF L S T ST
+
 # Layout:
 # |  K,  A  [ B, T, ST, S ] D,  DI    |
 # |  L,  DF [ CF,CIF,CI,C ] D, R1, R2 |
 
-#To-Do:
-    #Graphical Description of how the scales are constructed
+#MODEL 1000 -- LEFT HANDED LIMACON 2020 -- KWENA & TOOR CO.S
 
-    #maybe an easy to use interface for customizations. . nah
-
-    #MODEL 1000 -- LEFT HANDED LIMACON 2020 -- KWENA & TOOR CO.S
+#please forgive my sloppy coding :(
