@@ -1,8 +1,20 @@
 # Slide-Rule
-Requirements: PIL, Computer Modern Fonts (ttf)
 
-"Sticker Cut" file generates sticker image ready to be scaled to 677.33ppi in Gimp and then print and cut in Silhouette.
+This program lets you generate complete slide rule patterns.
+It's pretty inefficient, but it works
 
-"Laser Cut" file generates png images of the frame alone (Scale Cutting Pattern) and the frame with the scales fully printed inside (Scale Etching Pattern). Additionally, it generates a Diagnostic Print of all the scales alone. Internally, the program can be modified to print pink lines indicating where the metal pieces would go (just un-comment the metalcutoffs() in the rendering section) and you may select whether to render, run diagnostic, or both.
+To run the program, you will need:
+PIL, and an installation of two fonts: cmuntt.ttf and cmunit.ttf (part of the infamous LaTeX fonts)
+which can be found here: https://www.freebestfonts.com/computer-modern-font
 
-The excel files helps convert between pixels and inches / millimeters
+The program will prompt which mode you would like to run:
+
+- 'render': Prints a rendering of the full size scales in their correct positions
+- 'diagnostic': Prints a rendering containing each available scale arranged in rows
+- 'stickerprint': Prints an image which can be scalled to 677.33 ppi in Gimp and then Print+Cut in Silhouette Studio
+
+The program make take 1-2 minutes to run so be patient. If you run across issues, comment on instructables and I will attempt to explain myself :)
+
+The excel file attached can help convert between pixels, inches, and millimeters when the slide rule is being built out of physical material 
+
+Enjoy!
